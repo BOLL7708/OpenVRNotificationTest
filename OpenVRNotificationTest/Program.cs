@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Valve.VR;
 
 namespace OpenVRNotificationTest
@@ -30,7 +26,7 @@ namespace OpenVRNotificationTest
                 
                 // Loading bitmap from disk
                 var currentDir = Directory.GetCurrentDirectory();
-                var path = $"{currentDir}\\boll.png";
+                var path = $"{currentDir}\\boll_alpha.png";
                 Bitmap bitmap = null;
                 try
                 {
@@ -43,7 +39,12 @@ namespace OpenVRNotificationTest
 
                 // Flip R & B channels in bitmap so it displays correctly
                 int bytesPerPixel = Bitmap.GetPixelFormatSize(bitmap.PixelFormat) / 8;
-                BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
+                Utils.PrintDebug($"Pixel format of input bitmap: {bitmap.PixelFormat}");
+                BitmapData data = bitmap.LockBits(
+                    new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                    ImageLockMode.ReadWrite,
+                    bitmap.PixelFormat
+                );
                 int length = Math.Abs(data.Stride) * bitmap.Height;
                 unsafe
                 {
@@ -61,7 +62,7 @@ namespace OpenVRNotificationTest
                 BitmapData bitmapData = bitmap.LockBits(
                     new Rectangle(0, 0, bitmap.Width, bitmap.Height),
                     ImageLockMode.ReadOnly,
-                    PixelFormat.Format32bppArgb  // bitmapClone.PixelFormat
+                    PixelFormat.Format32bppArgb // Alawys the same format here.
                 );
                 NotificationBitmap_t notificationBitmap = new NotificationBitmap_t
                 {
